@@ -1,0 +1,20 @@
+{
+  "name": "ghost",
+  "private": true,
+  "version": "0.1.0",
+  "description": "GHOST - AI Discord Server Manager (by Ghost Studios)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/bot",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "db:generate": "npm run db:generate --workspace=@ghost/database",
+    "db:push": "npm run db:push --workspace=@ghost/database",
+    "db:studio": "npm run db:studio --workspace=@ghost/database"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  }
+}

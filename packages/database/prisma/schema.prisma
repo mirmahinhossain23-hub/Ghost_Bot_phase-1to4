@@ -1,0 +1,91 @@
+// GHOST — Database schema
+//
+// Starts on SQLite so setup is zero-cost and zero-infrastructure.
+// To move to Postgres later: change provider to "postgresql" and
+// point DATABASE_URL at a real connection string. Nothing else in
+// this project talks to the database directly except this package,
+// so that swap does not touch bot/ai/discord-tools code.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// One row per Discord server Ghost has been added to.
+model Guild {
+  id        String   @id // Discord guild id
+  name      String
+  wakeWord  String   @default("ghost")
+  aiProvider String  @default("gemini")
+  /// JSON-encoded TicketConfig, set by configure_ticket_system. Null until configured.
+  ticketConfig String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  actionLogs ActionLog[]
+}
+
+/// Audit trail: every tool Ghost successfully or unsuccessfully executes.
+model ActionLog {
+  id                   String   @id @default(cuid())
+  /// Short, shareable ID like "GST-8F4K2" shown to users for reference/support.
+  actionCode           String   @unique
+  guildId              String
+  guild                Guild    @relation(fields: [guildId], references: [id])
+  requestedByUserId    String
+  tool                 String
+  parameters           String   // JSON-encoded ToolCall parameters
+  targets              String   @default("[]") // JSON-encoded ActionTarget[]
+  riskLevel            String   @default("medium")
+  requiredConfirmation Boolean  @default(false)
+  success              Boolean
+  message              String
+  /// Best-effort recovery data captured before a destructive change (JSON, nullable).
+  /// Foundation for a future undo — not a guarantee every action is reversible.
+  snapshot             String?
+  createdAt            DateTime @default(now())
+
+  @@index([guildId, createdAt])
+}
+
+model DashboardUser {
+  id          String              @id
+  username    String
+  avatar      String?
+  accessLevel String              @default("OWNER")
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  sessions    DashboardSession[]
+  auditLogs   DashboardAudit[]
+}
+
+model DashboardSession {
+  id        String        @id
+  userId    String
+  user      DashboardUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime      @default(now())
+  lastSeen  DateTime      @default(now())
+
+  @@index([userId, expiresAt])
+}
+
+model DashboardAudit {
+  id         String        @id @default(cuid())
+  userId     String
+  user       DashboardUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action     String
+  guildId    String?
+  targetId   String?
+  parameters String        @default("{}")
+  success    Boolean
+  error      String?
+  createdAt  DateTime      @default(now())
+
+  @@index([userId, createdAt])
+  @@index([guildId, createdAt])
+}

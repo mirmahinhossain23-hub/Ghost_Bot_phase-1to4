@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GhostBot Control Center</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">G</span><span>GhostBot <small>CONTROL CENTER</small></span></div>
+      <nav>
+        <p class="nav-label">Workspace</p>
+        <button class="nav-item active" data-view="dashboard">Dashboard</button>
+        <button class="nav-item" data-view="servers">Servers</button>
+        <button class="nav-item" data-view="commands">Commands</button>
+        <button class="nav-item" data-view="members">Members</button>
+        <button class="nav-item" data-view="roles">Roles</button>
+        <button class="nav-item" data-view="channels">Channels</button>
+        <button class="nav-item" data-view="moderation">Moderation</button>
+        <button class="nav-item" data-view="messages">Messages</button>
+        <button class="nav-item" data-view="automation">Automation</button>
+        <button class="nav-item" data-view="ai">AI</button>
+        <p class="nav-label">System</p>
+        <button class="nav-item" data-view="logs">Logs</button>
+        <button class="nav-item" data-view="analytics">Analytics</button>
+        <button class="nav-item" data-view="settings">Bot Settings</button>
+        <button class="nav-item" data-view="security">Security</button>
+        <button class="nav-item" data-view="invites">Invite Generator</button>
+        <button class="nav-item" data-view="system">System</button>
+        <button class="nav-item" data-view="owner">Owner</button>
+      </nav>
+      <div class="sidebar-footer"><span class="status-dot"></span><span>Live backend</span><span id="uptime">--</span></div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar">
+        <div><span class="eyebrow">OPERATIONAL CONSOLE</span><h1 id="page-title">Dashboard</h1></div>
+        <div class="top-actions"><label class="server-select"><span>SERVER</span><select id="server-selector"><option>Loading servers...</option></select></label><span class="online-pill"><span class="status-dot"></span><span id="connection-label">Checking</span></span><button class="profile" id="profile">Owner</button></div>
+      </header>
+      <section id="app" class="view"></section>
+    </main>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
